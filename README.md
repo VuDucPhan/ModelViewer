@@ -1,27 +1,13 @@
-# Viewer (Node.js)
+### Note
+> For a more detailed step-by-step tutorial explaining the setup and usage of this sample, please visit: https://github.com/autodesk-platform-services/aps-simple-viewer-nodejs
 
-![platforms](https://img.shields.io/badge/platform-windows%20%7C%20osx%20%7C%20linux-lightgray.svg)
-[![node.js](https://img.shields.io/badge/Node.js-20.13-blue.svg)](https://nodejs.org)
-[![npm](https://img.shields.io/badge/npm-10.5-blue.svg)](https://www.npmjs.com/)
-[![license](https://img.shields.io/:license-mit-green.svg)](https://opensource.org/licenses/MIT)
+This sample application demonstrates the following aspects of the APS Viewer:
 
-[Autodesk Platform Services](https://aps.autodesk.com) application built by following
-the [Viewer](https://tutorials.autodesk.io/tutorials/simple-viewer/) tutorial
-from https://tutorials.autodesk.io.
+- Authentication using 2-legged context
+- Upload and translation of files to SVF2 format 
+- Loading and rendering of models in the viewer
+- Basic viewer customization (setting background color, adding toolbar buttons, etc.)
 
-![thumbnail](thumbnail.png)
-
-## Development
-
-### Prerequisites
-
-- [APS credentials](https://forge.autodesk.com/en/docs/oauth/v2/tutorials/create-app)
-- [Node.js](https://nodejs.org) (Long Term Support version is recommended)
-- Command-line terminal such as [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/overview)
-or [bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell)) (should already be available on your system)
-
-> We recommend using [Visual Studio Code](https://code.visualstudio.com) which, among other benefits,
-> provides an [integrated terminal](https://code.visualstudio.com/docs/terminal/basics) as well.
 
 ### Setup & Run
 
@@ -40,14 +26,3 @@ APS_CLIENT_SECRET="<client-secret>"
 - Run the application, either from your code editor, or by running `npm start` in terminal
 - Open http://localhost:8080
 
-> When using [Visual Studio Code](https://code.visualstudio.com), you can run & debug
-> the application by pressing `F5`.
-
-## Troubleshooting
-
-Please contact us via https://forge.autodesk.com/en/support/get-help.
-
-## License
-
-This sample is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-Please see the [LICENSE](LICENSE) file for more details.
