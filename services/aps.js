@@ -3,6 +3,14 @@ const { OssClient, Region, PolicyKey } = require('@aps_sdk/oss');
 const { ModelDerivativeClient, View, OutputType } = require('@aps_sdk/model-derivative');
 const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_BUCKET } = require('../config.js');
 
+// Kiểm tra và ghi log thông tin khi chạy trên Vercel
+if (process.env.VERCEL) {
+    console.log('Đang chạy trên Vercel');
+    console.log('APS_CLIENT_ID có tồn tại:', !!APS_CLIENT_ID);
+    console.log('APS_CLIENT_SECRET có tồn tại:', !!APS_CLIENT_SECRET);
+    console.log('APS_BUCKET:', APS_BUCKET);
+}
+
 const authenticationClient = new AuthenticationClient();
 const ossClient = new OssClient();
 const modelDerivativeClient = new ModelDerivativeClient();
