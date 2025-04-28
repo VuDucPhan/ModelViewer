@@ -21,7 +21,7 @@ async function setupModelSelection(viewer, selectedUrn) {
             onModelSelected(viewer, dropdown.value);
         }
     } catch (err) {
-        alert('Could not list models. See the console for more details.');
+        showNotification('Không thể tải danh sách mô hình. Kiểm tra console để biết thêm chi tiết.', 'error');
         console.error(err);
     }
 }
@@ -33,25 +33,64 @@ async function setupModelUpload(viewer) {
     upload.onclick = () => input.click();
     input.onchange = async () => {
         const file = input.files[0];
-        let data = new FormData();
-        data.append('model-file', file);
-        if (file.name.endsWith('.zip')) { // When uploading a zip file, ask for the main design file in the archive
-            const entrypoint = window.prompt('Vui lòng nhập tên file thiết kế chính trong tệp nén.');
-            data.append('model-zip-entrypoint', entrypoint);
+        if (!file) return;
+        
+        // Kiểm tra kích thước file trước khi upload
+        const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+        if (file.size > MAX_FILE_SIZE) {
+            showNotification(`File quá lớn. Kích thước tối đa là 50MB. File của bạn: ${(file.size / (1024 * 1024)).toFixed(2)}MB`, 'error');
+            input.value = '';
+            return;
         }
-        upload.setAttribute('disabled', 'true');
-        models.setAttribute('disabled', 'true');
-        showNotification(`Đang tải lên mô hình <em>${file.name}</em>. Vui lòng không tải lại trang.`, 'info');
+        
         try {
-            const resp = await fetch('/api/models', { method: 'POST', body: data });
-            if (!resp.ok) {
-                throw new Error(await resp.text());
+            // Hiển thị thông tin file đang upload
+            showNotification(`<div class="file-info">
+                <div><strong>Tên:</strong> ${file.name}</div>
+                <div><strong>Kích thước:</strong> ${(file.size / (1024 * 1024)).toFixed(2)}MB</div>
+                <div><strong>Loại:</strong> ${file.type}</div>
+            </div>`, 'info');
+            
+            let data = new FormData();
+            data.append('model-file', file);
+            
+            if (file.name.endsWith('.zip')) { // When uploading a zip file, ask for the main design file in the archive
+                const entrypoint = window.prompt('Vui lòng nhập tên file thiết kế chính trong tệp nén.');
+                if (entrypoint) {
+                    data.append('model-zip-entrypoint', entrypoint);
+                }
             }
+            
+            upload.setAttribute('disabled', 'true');
+            models.setAttribute('disabled', 'true');
+            showNotification(`<div class="loading-spinner"></div> Đang tải lên mô hình <em>${file.name}</em>. Vui lòng không tải lại trang.`, 'info');
+            
+            // Gửi dữ liệu lên server
+            const resp = await fetch('/api/models', { 
+                method: 'POST', 
+                body: data,
+                timeout: 120000 // 2 phút timeout
+            });
+            
+            if (!resp.ok) {
+                const errorText = await resp.text();
+                let errorMessage = 'Lỗi không xác định khi tải lên';
+                try {
+                    const errorData = JSON.parse(errorText);
+                    errorMessage = errorData.error || errorMessage;
+                } catch (e) {
+                    // Nếu phản hồi không phải là JSON, sử dụng text gốc
+                    errorMessage = errorText;
+                }
+                throw new Error(errorMessage);
+            }
+            
             const model = await resp.json();
             setupModelSelection(viewer, model.urn);
+            showNotification(`Tải lên mô hình ${file.name} thành công!`, 'success');
         } catch (err) {
-            showNotification(`Không thể tải lên mô hình ${file.name}. Kiểm tra console để biết thêm chi tiết.`, 'error');
-            console.error(err);
+            showNotification(`Không thể tải lên mô hình ${file.name}. Lỗi: ${err.message}`, 'error');
+            console.error('Upload error:', err);
         } finally {
             upload.removeAttribute('disabled');
             models.removeAttribute('disabled');

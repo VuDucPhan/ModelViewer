@@ -2,6 +2,11 @@ const express = require('express');
 const { PORT } = require('./config.js');
 
 const app = express();
+
+// Tăng giới hạn kích thước body request
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
 app.use(express.static('wwwroot'));
 app.use(require('./routes/auth.js'));
 app.use(require('./routes/models.js'));
